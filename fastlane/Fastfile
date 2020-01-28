@@ -1,0 +1,19 @@
+# fastlane_require 'fileutils'
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Description of what the lane does"
+  lane :unit_tests do
+
+    # Create direcotry if it doesn't exist
+    build_directory = File.dirname("#{ENV['PWD']}/.build")
+    unless File.directory?(build_directory)
+      FileUtils.mkdir_p(build_directory)
+    end
+
+    # Run tests
+    cocoapods(try_repo_update_on_error: true)
+    scan(workspace: 'HelloCodeCoverage.xcworkspace', scheme: 'HelloCodeCoverage', derived_data_path: build_directory)
+  end
+end

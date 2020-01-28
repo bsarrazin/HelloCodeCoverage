@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'cocoapods'
 gem 'fastlane'
+gem 'slather'
 gem 'terminal-table'
 
 plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')
