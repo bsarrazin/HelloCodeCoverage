@@ -46,25 +46,26 @@ platform :ios do
 
     # Fetch S3 URL
     new_line = "\n"
-    # git_commmit = `git rev-parse HEAD`.delete!(new_line)
+    git_commit = ENV['BITRISE_GIT_COMMIT']
+    git_commit ||= `git rev-parse HEAD`.delete!(new_line)
     upload_token = '1fa0a3d8-1cb5-4db7-bf43-896209e8151e'
 
     query = {
       'branch': ENV['BITRISE_GIT_BRANCH'],
       'build_url': ENV['BITRISE_BUILD_URL'],
       'build': ENV['BITRISE_BUILD_NUMBER'],
-      'commit': ENV['BITRISE_GIT_COMMIT'],
-      'pr': ENV['BITRISE_PULL_REQUEST'],
+      'commit': git_commit,
       'service': 'bitrise',
       'slug': 'bsarrazin/HelloCodeCoverage',
-      'upload_token': upload_token
+      'token': upload_token
     }.map { |key, value|
       "#{key}=#{value}"
     }.join('&')
 
-    fetch_command = "curl -sX POST -H 'Accept: text/plain' \"https://codecov.io/upload/v4?#{query}"
-
+    fetch_command = "curl -sX POST -H 'Accept: text/plain' \"https://codecov.io/upload/v4?#{query}\""
+    UI.message "Attempting `#{fetch_command}`"
     result = `#{fetch_command}`.split(new_line)
+    UI.message "Result: #{result}"
     codecov_url = result[0]
     s3_url = result[1]
 
