@@ -1,5 +1,3 @@
-# fastlane_require 'fileutils'
-
 default_platform(:ios)
 
 platform :ios do
@@ -48,9 +46,23 @@ platform :ios do
 
     # Fetch S3 URL
     new_line = "\n"
-    git_commmit = `git rev-parse HEAD`.delete!(new_line)
+    # git_commmit = `git rev-parse HEAD`.delete!(new_line)
     upload_token = '1fa0a3d8-1cb5-4db7-bf43-896209e8151e'
-    fetch_command = "curl -sX POST -H 'Accept: text/plain' \"https://codecov.io/upload/v4?commit=#{git_commmit}&service=bitrise&token=#{upload_token}\""
+
+    query = {
+      'branch': ENV['BITRISE_GIT_BRANCH'],
+      'build_url': ENV['BITRISE_BUILD_URL'],
+      'build': ENV['BITRISE_BUILD_NUMBER'],
+      'commit': ENV['BITRISE_GIT_COMMIT'],
+      'pr': ENV['BITRISE_PULL_REQUEST'],
+      'service': 'bitrise',
+      'slug': 'bsarrazin/HelloCodeCoverage',
+      'upload_token': upload_token
+    }.map { |key, value|
+      "#{key}=#{value}"
+    }.join('&')
+
+    fetch_command = "curl -sX POST -H 'Accept: text/plain' \"https://codecov.io/upload/v4?#{query}"
 
     result = `#{fetch_command}`.split(new_line)
     codecov_url = result[0]
