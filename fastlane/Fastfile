@@ -50,7 +50,7 @@ platform :ios do
     new_line = "\n"
     git_commmit = `git rev-parse HEAD`.delete!(new_line)
     upload_token = '1fa0a3d8-1cb5-4db7-bf43-896209e8151e'
-    fetch_command = "curl -sX POST -H 'Accept: text/plain' \"https://codecov.io/upload/v4?commit=#{git_commmit}&token=#{upload_token}\""
+    fetch_command = "curl -sX POST -H 'Accept: text/plain' \"https://codecov.io/upload/v4?commit=#{git_commmit}&service=bitrise&token=#{upload_token}\""
 
     result = `#{fetch_command}`.split(new_line)
     codecov_url = result[0]
