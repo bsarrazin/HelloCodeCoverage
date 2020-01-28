@@ -7,13 +7,43 @@ platform :ios do
   lane :unit_tests do
 
     # Create direcotry if it doesn't exist
-    build_directory = File.dirname("#{ENV['PWD']}/.build")
+    build_directory = "#{ENV['PWD']}/.build"
     unless File.directory?(build_directory)
       FileUtils.mkdir_p(build_directory)
+    end
+    reports_directory = "#{ENV['PWD']}/.reports"
+    unless File.directory?(reports_directory)
+      FileUtils.mkdir_p(reports_directory)
+    end
+    html_directory = "#{reports_directory}/html"
+    unless File.directory?(html_directory)
+      FileUtils.mkdir_p(html_directory)
+    end
+    xml_directory = "#{reports_directory}/xml"
+    unless File.directory?(xml_directory)
+      FileUtils.mkdir_p(xml_directory)
     end
 
     # Run tests
     cocoapods(try_repo_update_on_error: true)
     scan(workspace: 'HelloCodeCoverage.xcworkspace', scheme: 'HelloCodeCoverage', derived_data_path: build_directory)
+
+    # Create code coverage reports
+    slather(
+      proj: "HelloCodeCoverage.xcodeproj",
+      scheme: "HelloCodeCoverage",
+      build_directory: build_directory,
+      output_directory: html_directory,
+      use_bundle_exec: true,
+      html: true
+    )
+    slather(
+      proj: "HelloCodeCoverage.xcodeproj",
+      scheme: "HelloCodeCoverage",
+      build_directory: build_directory,
+      output_directory: xml_directory,
+      use_bundle_exec: true,
+      cobertura_xml: true
+    )
   end
 end
