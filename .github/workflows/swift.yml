@@ -1,0 +1,15 @@
+name: Swift
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macos
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Env Setup
+      run: bundle install
+    - name: Unit Tests
+      run: bundle exec fastlane unit_tests
